@@ -1,0 +1,36 @@
+{
+  "config": {
+    "base_model": "Qwen/Qwen3.5-0.8B",
+    "revision": "2fc06364715b967f1860aea9cf38778875588b17",
+    "seed": 42,
+    "num_train_epochs": 2,
+    "warmup_steps": 3,
+    "lr": 0.0002,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "max_seq_len": 512,
+    "max_new_tokens": 256,
+    "gen": {
+      "do_sample": false
+    }
+  },
+  "data": {
+    "train_examples": 92,
+    "holdout_examples": 24,
+    "test_questions": 21
+  },
+  "versions": {
+    "torch": "2.11.0+cu130",
+    "transformers": "5.18.0",
+    "peft": "0.21.1",
+    "trl": "1.14.2",
+    "accelerate": "1.15.0",
+    "datasets": "5.1.0"
+  },
+  "train_seconds": 82.34,
+  "train_steps": 24,
+  "last_logged_train_loss": 1.276802921295166,
+  "before_generate_seconds": 239.8,
+  "after_generate_seconds": 97.31,
+  "note": "回答の意味的正確性の自動採点はしていない。comparison_review.csvを人間が評価する。"
+}
