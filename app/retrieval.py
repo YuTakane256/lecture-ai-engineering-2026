@@ -137,6 +137,35 @@ def search(query: str) -> list[dict]:
         """, (sqlite_vec.serialize_float32(vector), RAG_TOP_K))
         return [dict(row) for row in rows]
 
+def search_with_neighbors(query: str) -> list[dict]:
+    """検索で見つかったページと、その前後1ページを重複なしで返す。"""
+    hits = search(query)
+
+    pages = {
+        (page["document_id"], page["page"]): page
+        for page in load_pages()
+    }
+
+    results = []
+    seen = set()
+
+    for hit in hits:
+        for offset in (-1, 0, 1):
+            if offset == 0:
+                page = hit
+            else:
+                page = pages.get(
+                    (hit["document_id"], hit["page"] + offset)
+                )
+
+            if page is None or page["page_id"] in seen:
+                continue
+
+            seen.add(page["page_id"])
+            results.append(page)
+
+    return results
+
 
 def search_graph(query: str) -> dict:
     """ベクトル検索を入口に、前後ページと共通用語で候補を広げる。"""

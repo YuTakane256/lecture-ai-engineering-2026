@@ -3,6 +3,7 @@
 ここに書いた関数の docstring と型ヒントが、そのままモデルへの「ツールの説明文」になる。
 説明文を書き換えると、モデルがツールを使うかどうか・どんな引数で呼ぶかが変わる。
 """
+import os
 
 import json
 from functools import cache
@@ -88,10 +89,14 @@ def search_materials(query: str) -> str:
     """
     from google.genai.errors import APIError
     import sqlite3
-    from app.retrieval import search
+    from app.retrieval import search, search_with_neighbors
 
     try:
-        return json.dumps({"results": search(query)}, ensure_ascii=False)
+        if os.getenv("AIE_RAG_NEIGHBORS") == "1":
+            results = search_with_neighbors(query)
+        else:
+            results = search(query)    
+        return json.dumps({"results":results}, ensure_ascii=False)
     except (ValueError, FileNotFoundError, sqlite3.Error) as e:
         return json.dumps({"error": str(e), "results": []}, ensure_ascii=False)
     except APIError as e:
